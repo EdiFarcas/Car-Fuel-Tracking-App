@@ -10,6 +10,7 @@ datasource db {
 model User {
   id    String @id @default(cuid())
   email String @unique
+  hashedPassword String
   cars  Car[]
 }
 
@@ -17,11 +18,17 @@ model Car {
   id       String   @id @default(cuid())
   user     User     @relation(fields: [userId], references: [id])
   userId   String
-  name     String
+
+  name     String        // User-defined name (e.g. "Red BMW")
+  make     String        // Manufacturer (e.g. "BMW")
+  model    String        // Model (e.g. "320i")
+  year     Int           // Year (e.g. 2019)
   fuelType FuelType
+
   fillUps  FillUp[]
   mileage  MileageEntry[]
 }
+
 
 model FillUp {
   id       String   @id @default(cuid())
