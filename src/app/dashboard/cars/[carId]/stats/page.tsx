@@ -16,7 +16,7 @@ export default async function StatsPage({ params }: StatsProps) {
   const car = await prisma.car.findFirst({
     where: {
       id: params.carId,
-      user: { email: session.user?.email! },
+      user: { email: session.user?.email || '' },
     },
     include: {
       fillUps: {
@@ -30,9 +30,13 @@ export default async function StatsPage({ params }: StatsProps) {
 
   if (fillUps.length < 2) {
     return (
-      <main className="max-w-xl mx-auto p-6">
-        <h1 className="text-2xl font-bold mb-2">Not Enough Data</h1>
-        <p className="text-gray-600">Add at least 2 fill-ups to see statistics.</p>
+      <main className="max-w-xl mx-auto p-8 flex flex-col items-center justify-center bg-[var(--muted)] rounded-xl shadow space-y-4">
+        <div className="flex flex-col items-center gap-2">
+          <span className="text-5xl text-[var(--primary)]">⛽</span>
+          <h1 className="text-2xl font-bold text-[var(--primary)]">Not Enough Data</h1>
+          <p className="text-gray-700 text-center">Add at least 2 fill-ups to see your fuel statistics and insights.</p>
+          <a href={`/dashboard/cars/${params.carId}/fillups`} className="mt-4 inline-block bg-[var(--secondary)] text-white px-6 py-2 rounded-lg font-semibold shadow hover:bg-green-700 transition">➕ Add Fill-Up</a>
+        </div>
       </main>
     );
   }
@@ -49,15 +53,16 @@ export default async function StatsPage({ params }: StatsProps) {
   const costPerKm = totalCost / totalDistance;
 
   return (
-    <main className="max-w-xl mx-auto p-6 space-y-4">
-      <h1 className="text-2xl font-bold">Fuel Stats</h1>
-
-      <div className="space-y-2">
-        <StatCard label="Total Distance" value={`${totalDistance.toFixed(0)} km`} />
-        <StatCard label="Total Fuel Used" value={`${totalLiters.toFixed(2)} L`} />
-        <StatCard label="Total Fuel Cost" value={`${totalCost.toFixed(2)} ${fillUps[0].currency}`} />
-        <StatCard label="Average Consumption" value={`${avgConsumption.toFixed(2)} L / 100km`} />
-        <StatCard label="Average Cost / km" value={`${costPerKm.toFixed(2)} ${fillUps[0].currency}`} />
+    <main className="max-w-2xl mx-auto p-8 space-y-8 bg-[var(--muted)] rounded-xl shadow">
+      <h1 className="text-3xl font-bold text-[var(--primary)] flex items-center gap-2">
+        <span role="img" aria-label="stats">📊</span> Fuel Stats
+      </h1>
+      <div className="grid grid-cols-1 sm:grid-cols-2 gap-6">
+        <StatCard label="Total Distance" value={`${totalDistance.toFixed(0)} km`} icon="🛣️" color="primary" />
+        <StatCard label="Total Fuel Used" value={`${totalLiters.toFixed(2)} L`} icon="⛽" color="secondary" />
+        <StatCard label="Total Fuel Cost" value={`${totalCost.toFixed(2)} ${fillUps[0].currency}`} icon="💸" color="accent" />
+        <StatCard label="Average Consumption" value={`${avgConsumption.toFixed(2)} L / 100km`} icon="📏" color="primary" />
+        <StatCard label="Average Cost / km" value={`${costPerKm.toFixed(2)} ${fillUps[0].currency}`} icon="💰" color="secondary" />
       </div>
     </main>
   );

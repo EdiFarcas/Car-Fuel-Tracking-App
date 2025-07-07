@@ -57,56 +57,75 @@ export default function FillUpsPage() {
   };
 
   return (
-    <main className="max-w-xl mx-auto p-6 space-y-6">
-      <h1 className="text-2xl font-bold">Fuel Fill-Ups</h1>
+    <main className="max-w-2xl mx-auto p-8 space-y-8 bg-[var(--muted)] rounded-xl shadow">
+      <h1 className="text-2xl font-bold text-[var(--primary)]">Fuel Fill-Ups</h1>
 
-      <form onSubmit={handleSubmit} className="space-y-4">
-        <input
-          name="mileage"
-          type="number"
-          placeholder="Odometer"
-          value={form.mileage}
-          onChange={handleChange}
-          required
-          className="w-full border px-3 py-2 rounded"
-        />
-        <input
-          name="liters"
-          type="number"
-          step="0.01"
-          placeholder="Liters"
-          value={form.liters}
-          onChange={handleChange}
-          required
-          className="w-full border px-3 py-2 rounded"
-        />
-        <input
-          name="cost"
-          type="number"
-          step="0.01"
-          placeholder="Total Cost"
-          value={form.cost}
-          onChange={handleChange}
-          required
-          className="w-full border px-3 py-2 rounded"
-        />
-        <select
-          name="currency"
-          value={form.currency}
-          onChange={handleChange}
-          className="w-full border px-3 py-2 rounded"
-        >
-          {currencies.map((c) => (
-            <option key={c} value={c}>{c}</option>
-          ))}
-        </select>
-        <button type="submit" className="w-full bg-green-600 text-white py-2 rounded">
+      <form onSubmit={handleSubmit} className="grid grid-cols-1 sm:grid-cols-2 gap-4 bg-white p-6 rounded-lg border border-[var(--border)]">
+        <div className="flex flex-col gap-1">
+          <label htmlFor="mileage" className="font-medium text-[var(--primary)]">Odometer</label>
+          <input
+            id="mileage"
+            name="mileage"
+            type="number"
+            placeholder="e.g. 102300"
+            value={form.mileage}
+            onChange={handleChange}
+            required
+            className="border border-[var(--border)] px-4 py-2 rounded-lg focus:outline-none focus:ring-2 focus:ring-[var(--primary)] bg-[var(--muted)] text-[var(--foreground)]"
+          />
+          <span className="text-xs text-gray-500">Enter the odometer reading at fill-up</span>
+        </div>
+        <div className="flex flex-col gap-1">
+          <label htmlFor="liters" className="font-medium text-[var(--primary)]">Liters</label>
+          <input
+            id="liters"
+            name="liters"
+            type="number"
+            step="0.01"
+            placeholder="e.g. 45.5"
+            value={form.liters}
+            onChange={handleChange}
+            required
+            className="border border-[var(--border)] px-4 py-2 rounded-lg focus:outline-none focus:ring-2 focus:ring-[var(--primary)] bg-[var(--muted)] text-[var(--foreground)]"
+          />
+          <span className="text-xs text-gray-500">How many liters did you fill?</span>
+        </div>
+        <div className="flex flex-col gap-1">
+          <label htmlFor="cost" className="font-medium text-[var(--primary)]">Total Cost</label>
+          <input
+            id="cost"
+            name="cost"
+            type="number"
+            step="0.01"
+            placeholder="e.g. 300.00"
+            value={form.cost}
+            onChange={handleChange}
+            required
+            className="border border-[var(--border)] px-4 py-2 rounded-lg focus:outline-none focus:ring-2 focus:ring-[var(--primary)] bg-[var(--muted)] text-[var(--foreground)]"
+          />
+          <span className="text-xs text-gray-500">Total price paid for this fill-up</span>
+        </div>
+        <div className="flex flex-col gap-1">
+          <label htmlFor="currency" className="font-medium text-[var(--primary)]">Currency</label>
+          <select
+            id="currency"
+            name="currency"
+            value={form.currency}
+            onChange={handleChange}
+            className="border border-[var(--border)] px-4 py-2 rounded-lg focus:outline-none focus:ring-2 focus:ring-[var(--primary)] bg-[var(--muted)] text-[var(--foreground)]"
+          >
+            {currencies.map((c) => (
+              <option key={c} value={c}>{c}</option>
+            ))}
+          </select>
+        </div>
+        <button type="submit" className="col-span-full bg-[var(--secondary)] text-white py-2 rounded-lg font-semibold shadow hover:bg-green-700 transition mt-2">
           ➕ Add Fill-Up
         </button>
-        {error && <p className="text-red-500">{error}</p>}
+        {error && <p className="col-span-full text-red-500 text-center mt-2">{error}</p>}
       </form>
 
-      <ul className="space-y-2">
+      <ul className="space-y-3">
         {fillups.map((fill) => (
           <FillUpCard key={fill.id} fill={fill} /> // ✅
         ))}

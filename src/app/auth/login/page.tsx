@@ -27,16 +27,16 @@ export default function LoginPage() {
   };
 
   return (
-    <main className="max-w-md mx-auto p-6">
-      <h1 className="text-2xl font-bold mb-4">Login</h1>
-      <form onSubmit={handleSubmit} className="space-y-4">
+    <main className="max-w-md mx-auto p-8 bg-[var(--muted)] rounded-xl shadow space-y-6">
+      <h1 className="text-2xl font-bold text-[var(--primary)]">Login</h1>
+      <form onSubmit={handleSubmit} className="space-y-5">
         <input
           type="email"
           placeholder="Email"
           value={email}
           required
           onChange={(e) => setEmail(e.target.value)}
-          className="w-full border px-3 py-2 rounded"
+          className="w-full border border-[var(--border)] px-4 py-3 rounded-lg bg-white focus:outline-none focus:ring-2 focus:ring-[var(--primary)]"
         />
         <input
           type="password"
@@ -44,12 +44,12 @@ export default function LoginPage() {
           value={password}
           required
           onChange={(e) => setPassword(e.target.value)}
-          className="w-full border px-3 py-2 rounded"
+          className="w-full border border-[var(--border)] px-4 py-3 rounded-lg bg-white focus:outline-none focus:ring-2 focus:ring-[var(--primary)]"
         />
-        <button type="submit" className="w-full bg-blue-600 text-white py-2 rounded">
+        <button type="submit" className="w-full bg-[var(--primary)] text-white py-3 rounded-lg font-semibold shadow hover:bg-blue-700 transition">
           Sign In
         </button>
-        {error && <p className="text-red-500">{error}</p>}
+        {error && <p className="text-red-500 text-center">{error}</p>}
       </form>
     </main>
   );

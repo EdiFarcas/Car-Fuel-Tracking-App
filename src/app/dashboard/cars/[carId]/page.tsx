@@ -22,33 +22,30 @@ export default async function CarDetailPage({ params }: CarDetailPageProps) {
   });
 
   if (!car) {
-    return <div className="p-6">Car not found or unauthorized access.</div>;
+    return <div className="p-8 text-center text-red-500 text-lg font-semibold">Car not found or unauthorized access.</div>;
   }
 
   return (
-    <main className="max-w-3xl mx-auto p-6 space-y-4">
-      <h1 className="text-3xl font-bold">{car.name}</h1>
-      <p className="text-gray-700">{car.make} {car.model} ({car.year})</p>
-      <p className="text-gray-600">Fuel Type: {car.fuelType}</p>
-
-      <div className="flex gap-4 mt-6">
+    <main className="max-w-3xl mx-auto p-8 space-y-6 bg-[var(--muted)] rounded-xl shadow">
+      <h1 className="text-3xl font-bold text-[var(--primary)]">{car.name}</h1>
+      <p className="text-lg text-gray-700">{car.make} {car.model} ({car.year})</p>
+      <p className="text-gray-600">Fuel Type: <span className="font-semibold text-[var(--secondary)]">{car.fuelType}</span></p>
+      <div className="flex flex-wrap gap-4 mt-8">
         <Link
           href={`/dashboard/cars/${car.id}/mileage`}
-          className="bg-blue-600 text-white px-4 py-2 rounded"
+          className="bg-[var(--primary)] text-white px-5 py-2 rounded-lg font-semibold shadow hover:bg-blue-700 transition"
         >
           ➕ Add Mileage
         </Link>
-
         <Link
           href={`/dashboard/cars/${car.id}/fillups`}
-          className="bg-green-600 text-white px-4 py-2 rounded"
+          className="bg-[var(--secondary)] text-white px-5 py-2 rounded-lg font-semibold shadow hover:bg-green-700 transition"
         >
           ➕ Add Fill-Up
         </Link>
-
         <Link
           href={`/dashboard/cars/${car.id}/stats`}
-          className="bg-purple-600 text-white px-4 py-2 rounded"
+          className="bg-[var(--accent)] text-white px-5 py-2 rounded-lg font-semibold shadow hover:bg-purple-800 transition"
         >
           📊 View Stats
         </Link>
