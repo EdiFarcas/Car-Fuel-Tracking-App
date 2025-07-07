@@ -1,7 +1,8 @@
 import type { Metadata } from "next";
 import { Geist, Geist_Mono } from "next/font/google";
 import "./globals.css";
-import Link from "next/link";
+import ClientNavbar from "../components/ClientNavbar";
+import Providers from "./providers";
 
 const geistSans = Geist({
   variable: "--font-geist-sans",
@@ -18,7 +19,7 @@ export const metadata: Metadata = {
   description: "Track your car's fuel and mileage easily.",
 };
 
-export default function RootLayout({
+export default async function RootLayout({
   children,
 }: Readonly<{
   children: React.ReactNode;
@@ -28,19 +29,15 @@ export default function RootLayout({
       <body
         className={`${geistSans.variable} ${geistMono.variable} antialiased bg-[var(--background)] text-[var(--foreground)]`}
       >
-        <header className="w-full px-6 py-4 flex items-center justify-between border-b border-[var(--border)] bg-[var(--muted)] shadow-sm">
-          <Link href="/dashboard" className="text-2xl font-bold tracking-tight text-[var(--primary)]">
-            🚗 Car Fuel Tracker
-          </Link>
-          <nav className="flex gap-4">
-            <Link href="/dashboard" className="hover:text-[var(--primary)] transition">Dashboard</Link>
-            <Link href="/dashboard/cars/new" className="hover:text-[var(--secondary)] transition">Add Car</Link>
-          </nav>
-        </header>
-        <div className="min-h-screen flex flex-col">
-          <div className="h-4" /> {/* Spacer between navbar and content */}
-          {children}
-        </div>
+        <Providers>
+          <header className="w-full px-6 py-4 border-b border-[var(--border)] bg-[var(--muted)]/80 backdrop-blur-md shadow-lg rounded-b-xl z-30 sticky top-0">
+            <ClientNavbar />
+          </header>
+          <div className="min-h-screen flex flex-col">
+            <div className="h-4" /> {/* Spacer between navbar and content */}
+            {children}
+          </div>
+        </Providers>
       </body>
     </html>
   );
