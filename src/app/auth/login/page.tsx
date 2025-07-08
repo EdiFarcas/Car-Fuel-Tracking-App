@@ -38,7 +38,7 @@ export default function LoginPage() {
             value={email}
             required
             onChange={(e) => setEmail(e.target.value)}
-            className="w-full max-w-2xl text-lg border border-[var(--border)] px-6 py-4 rounded-lg bg-white focus:outline-none focus:ring-2 focus:ring-[var(--primary)] text-gray-900 placeholder:text-gray-500"
+            className="w-full max-w-2xl text-lg border border-[var(--border)] px-6 py-4 rounded-lg bg-[var(--background)] focus:outline-none focus:ring-2 focus:ring-[var(--primary)] text-[var(--foreground)] placeholder:text-[var(--foreground)]/50"
           />
           <div className="relative w-full max-w-2xl">
             <input
@@ -47,12 +47,12 @@ export default function LoginPage() {
               value={password}
               required
               onChange={(e) => setPassword(e.target.value)}
-              className="w-full text-lg border border-[var(--border)] px-6 py-4 rounded-lg bg-white focus:outline-none focus:ring-2 focus:ring-[var(--primary)] text-gray-900 placeholder:text-gray-500 pr-16"
+              className="w-full text-lg border border-[var(--border)] px-6 py-4 rounded-lg bg-[var(--background)] focus:outline-none focus:ring-2 focus:ring-[var(--primary)] text-[var(--foreground)] placeholder:text-[var(--foreground)]/50 pr-16"
             />
             <button
               type="button"
               onClick={() => setShowPassword((v) => !v)}
-              className="absolute right-4 top-1/2 -translate-y-1/2 text-base text-gray-500 hover:text-[var(--primary)] focus:outline-none"
+              className="absolute right-4 top-1/2 -translate-y-1/2 text-base text-[var(--foreground)]/60 hover:text-[var(--primary)] focus:outline-none"
               tabIndex={-1}
               aria-label={showPassword ? "Hide password" : "Show password"}
             >

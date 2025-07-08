@@ -53,6 +53,7 @@ enum FuelType {
   GASOLINE
   DIESEL
   LPG
+  ELECTRIC
 }
 
 enum Currency {

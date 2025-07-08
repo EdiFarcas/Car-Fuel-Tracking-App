@@ -36,7 +36,7 @@ export default function RegisterPage() {
             value={email}
             required
             onChange={(e) => setEmail(e.target.value)}
-            className="w-full max-w-2xl text-lg border border-[var(--border)] px-6 py-4 rounded-lg bg-white focus:outline-none focus:ring-2 focus:ring-[var(--secondary)] text-gray-900 placeholder:text-gray-500"
+            className="w-full max-w-2xl text-lg border border-[var(--border)] px-6 py-4 rounded-lg bg-[var(--background)] focus:outline-none focus:ring-2 focus:ring-[var(--secondary)] text-[var(--foreground)] placeholder:text-[var(--foreground)]/50"
           />
           <div className="relative w-full max-w-2xl">
             <input
@@ -45,19 +45,19 @@ export default function RegisterPage() {
               value={password}
               required
               onChange={(e) => setPassword(e.target.value)}
-              className="w-full text-lg border border-[var(--border)] px-6 py-4 rounded-lg bg-white focus:outline-none focus:ring-2 focus:ring-[var(--secondary)] text-gray-900 placeholder:text-gray-500 pr-16"
+              className="w-full text-lg border border-[var(--border)] px-6 py-4 rounded-lg bg-[var(--background)] focus:outline-none focus:ring-2 focus:ring-[var(--secondary)] text-[var(--foreground)] placeholder:text-[var(--foreground)]/50 pr-16"
             />
             <button
               type="button"
               onClick={() => setShowPassword((v) => !v)}
-              className="absolute right-4 top-1/2 -translate-y-1/2 text-base text-gray-500 hover:text-[var(--secondary)] focus:outline-none"
+              className="absolute right-4 top-1/2 -translate-y-1/2 text-base text-[var(--foreground)]/60 hover:text-[var(--secondary)] focus:outline-none"
               tabIndex={-1}
               aria-label={showPassword ? "Hide password" : "Show password"}
             >
               {showPassword ? "Hide" : "Show"}
             </button>
           </div>
-          <button type="submit" className="w-full max-w-2xl bg-[var(--secondary)] text-white py-4 text-lg rounded-lg font-semibold shadow hover:bg-green-700 hover:scale-105 hover:shadow-lg transition-all duration-200">
+          <button type="submit" className="w-full max-w-2xl bg-[var(--secondary)] text-white py-4 text-lg rounded-lg font-semibold shadow hover:bg-[var(--secondary)]/80 hover:scale-105 hover:shadow-lg transition-all duration-200">
             Register
           </button>
           {error && <p className="text-red-500 text-center w-full">{error}</p>}

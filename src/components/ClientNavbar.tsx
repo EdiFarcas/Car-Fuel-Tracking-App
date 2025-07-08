@@ -3,6 +3,7 @@ import Link from "next/link";
 import { usePathname } from "next/navigation";
 import { useState } from "react";
 import { useSession } from "next-auth/react";
+import ThemeToggle from "./ThemeToggle";
 
 export default function ClientNavbar() {
   const { data: session } = useSession();
@@ -16,7 +17,8 @@ export default function ClientNavbar() {
     return (
       <Link
         href={href}
-        className={`px-4 py-2 rounded-lg font-semibold transition hover:bg-[var(--primary)] hover:text-white focus:outline-none focus:ring-2 focus:ring-[var(--primary)] ${isActive ? "underline text-[var(--primary)]" : "text-[var(--foreground)]"}`}
+        className={`px-4 py-2 rounded-lg font-semibold transition border border-[var(--primary)] shadow-sm focus:outline-none focus:ring-2 focus:ring-[var(--primary)]
+          ${isActive ? "bg-[var(--primary)] text-white" : "bg-[var(--muted)] text-[var(--primary)] hover:bg-[var(--primary)] hover:text-white"}`}
         aria-current={isActive ? "page" : undefined}
       >
         {children}
@@ -34,13 +36,14 @@ export default function ClientNavbar() {
       <div className="hidden md:flex gap-4 items-center">
         <NavLink href="/dashboard">Dashboard</NavLink>
         {isLoggedIn && <NavLink href="/dashboard/cars/new">Add Car</NavLink>}
+        <ThemeToggle />
         {isLoggedIn ? (
           <div className="flex items-center gap-2 ml-4">
             <span className="w-9 h-9 rounded-full bg-[var(--primary)] text-white flex items-center justify-center font-bold text-lg border-2 border-[var(--border)] shadow" title={session.user?.name || session.user?.email || undefined}>{userInitial}</span>
             <form action="/api/auth/signout" method="post">
               <button
                 type="submit"
-                className="px-4 py-2 rounded-lg bg-[var(--accent)] text-white font-semibold shadow hover:bg-purple-800 transition focus:outline-none focus:ring-2 focus:ring-[var(--accent)]"
+                className="px-4 py-2 rounded-lg bg-[var(--accent)] text-white font-semibold shadow hover:bg-[var(--accent)]/80 transition focus:outline-none focus:ring-2 focus:ring-[var(--accent)]"
               >
                 Log Out
               </button>
@@ -49,7 +52,7 @@ export default function ClientNavbar() {
         ) : (
           <>
             <Link href="/auth/login" className="px-4 py-2 rounded-lg border border-[var(--primary)] text-[var(--primary)] font-semibold hover:bg-[var(--primary)] hover:text-white transition focus:outline-none focus:ring-2 focus:ring-[var(--primary)]">Login</Link>
-            <Link href="/auth/register" className="px-4 py-2 rounded-lg bg-[var(--primary)] text-white font-semibold shadow hover:bg-blue-700 transition focus:outline-none focus:ring-2 focus:ring-[var(--primary)]">Register</Link>
+            <Link href="/auth/register" className="px-4 py-2 rounded-lg bg-[var(--primary)] text-white font-semibold shadow hover:bg-[var(--primary)]/80 transition focus:outline-none focus:ring-2 focus:ring-[var(--primary)]">Register</Link>
           </>
         )}
       </div>
@@ -72,7 +75,7 @@ export default function ClientNavbar() {
                 <form action="/api/auth/signout" method="post" className="w-full">
                   <button
                     type="submit"
-                    className="w-full px-4 py-2 rounded-lg bg-[var(--accent)] text-white font-semibold shadow hover:bg-purple-800 transition mt-2 focus:outline-none focus:ring-2 focus:ring-[var(--accent)]"
+                    className="w-full px-4 py-2 rounded-lg bg-[var(--accent)] text-white font-semibold shadow hover:bg-[var(--accent)]/80 transition mt-2 focus:outline-none focus:ring-2 focus:ring-[var(--accent)]"
                   >
                     Log Out
                   </button>
@@ -81,7 +84,7 @@ export default function ClientNavbar() {
             ) : (
               <>
                 <Link href="/auth/login" className="w-full px-4 py-2 rounded-lg border border-[var(--primary)] text-[var(--primary)] font-semibold hover:bg-[var(--primary)] hover:text-white transition focus:outline-none focus:ring-2 focus:ring-[var(--primary)]">Login</Link>
-                <Link href="/auth/register" className="w-full px-4 py-2 rounded-lg bg-[var(--primary)] text-white font-semibold shadow hover:bg-blue-700 transition focus:outline-none focus:ring-2 focus:ring-[var(--primary)]">Register</Link>
+                <Link href="/auth/register" className="w-full px-4 py-2 rounded-lg bg-[var(--primary)] text-white font-semibold shadow hover:bg-[var(--primary)]/80 transition focus:outline-none focus:ring-2 focus:ring-[var(--primary)]">Register</Link>
               </>
             )}
           </div>

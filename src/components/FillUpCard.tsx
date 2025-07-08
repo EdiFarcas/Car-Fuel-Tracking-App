@@ -1,10 +1,12 @@
-import { FillUp } from '@prisma/client';
-
-export default function FillUpCard({ fill }: { fill: FillUp }) {
+export default function FillUpCard({ fill }: { fill: any }) {
+  // If car.fuelType is ELECTRIC, show kWh instead of L
+  const isElectric = fill.car?.fuelType === 'ELECTRIC';
   return (
-    <div className="border rounded p-3 bg-white shadow-sm">
-      <div className="font-semibold text-black">{fill.mileage} km - {fill.liters} L</div>
-      <div className="text-sm text-gray-500">
+    <div className="border border-[var(--border)] rounded p-3 bg-[var(--background)] shadow-sm">
+      <div className="font-semibold text-[var(--foreground)]">
+        {fill.mileage} km - {fill.liters} {isElectric ? 'kWh' : 'L'}
+      </div>
+      <div className="text-sm text-[var(--foreground)]/60">
         {fill.cost} {fill.currency} — {new Date(fill.date).toLocaleString()}
       </div>
     </div>

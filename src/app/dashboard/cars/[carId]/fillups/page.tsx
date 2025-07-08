@@ -18,6 +18,7 @@ const currencies = ['EUR', 'USD', 'RON', 'GBP'];
 export default function FillUpsPage() {
   const { carId } = useParams();
   const [fillups, setFillups] = useState<FillUp[]>([]);
+  const [carFuelType, setCarFuelType] = useState<string | undefined>(undefined);
   const [form, setForm] = useState({
     mileage: '',
     liters: '',
@@ -31,6 +32,13 @@ export default function FillUpsPage() {
     fetch(`/api/fillups?carId=${carId}`)
       .then((res) => res.json())
       .then(setFillups);
+  }, [carId]);
+
+  // Fetch car fuel type
+  useEffect(() => {
+    fetch(`/api/cars/${carId}`)
+      .then((res) => res.json())
+      .then((car) => setCarFuelType(car?.fuelType));
   }, [carId]);
 
   const handleChange = (e: React.ChangeEvent<HTMLInputElement | HTMLSelectElement>) => {
@@ -56,6 +64,16 @@ export default function FillUpsPage() {
     }
   };
 
+  // Only render fill-ups when carFuelType is loaded
+  if (carFuelType === undefined) {
+    return (
+      <main className="max-w-2xl mx-auto p-8 space-y-8 bg-[var(--muted)] rounded-xl shadow">
+        <h1 className="text-2xl font-bold text-[var(--primary)]">Fuel Fill-Ups</h1>
+        <div className="text-center text-[var(--foreground)]/60 py-12">Loading car details...</div>
+      </main>
+    );
+  }
+
   return (
     <main className="max-w-2xl mx-auto p-8 space-y-8 bg-[var(--muted)] rounded-xl shadow">
       <h1 className="text-2xl font-bold text-[var(--primary)]">Fuel Fill-Ups</h1>
@@ -76,19 +94,23 @@ export default function FillUpsPage() {
           <span className="text-xs text-gray-500">Enter the odometer reading at fill-up</span>
         </div>
         <div className="flex flex-col gap-1">
-          <label htmlFor="liters" className="font-medium text-[var(--primary)]">Liters</label>
+          <label htmlFor="liters" className="font-medium text-[var(--primary)]">
+            {carFuelType === 'ELECTRIC' ? 'Kilowatt-hours' : 'Liters'}
+          </label>
           <input
             id="liters"
             name="liters"
             type="number"
             step="0.01"
-            placeholder="e.g. 45.5"
+            placeholder={carFuelType === 'ELECTRIC' ? 'e.g. 45.5' : 'e.g. 45.5'}
             value={form.liters}
             onChange={handleChange}
             required
             className="border border-[var(--border)] px-4 py-2 rounded-lg focus:outline-none focus:ring-2 focus:ring-[var(--primary)] bg-[var(--muted)] text-[var(--foreground)]"
           />
-          <span className="text-xs text-gray-500">How many liters did you fill?</span>
+          <span className="text-xs text-gray-500">
+            {carFuelType === 'ELECTRIC' ? 'How many kilowatt-hours did you charge?' : 'How many liters did you fill?'}
+          </span>
         </div>
         <div className="flex flex-col gap-1">
           <label htmlFor="cost" className="font-medium text-[var(--primary)]">Total Cost</label>
@@ -127,7 +149,7 @@ export default function FillUpsPage() {
 
       <ul className="space-y-3">
         {fillups.map((fill) => (
-          <FillUpCard key={fill.id} fill={fill} /> // ✅
+          <FillUpCard key={fill.id} fill={{ ...fill, car: { fuelType: carFuelType } }} />
         ))}
       </ul>
     </main>
