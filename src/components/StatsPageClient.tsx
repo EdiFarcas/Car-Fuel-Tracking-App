@@ -17,20 +17,28 @@ interface FillUp {
   cost: number;
   currency: string;
   date: string | Date;
-  car?: { fuelType?: string };
+  car?: { fuelType?: string; fuelTypes?: string[] };
+  fuelType?: string;
 }
 
 export default function StatsPageClient({ fillUps, carId, error, loading = false }: { fillUps: FillUp[]; carId: string; error?: string; loading?: boolean }) {
   const [range, setRange] = useState<number | null>(30);
   const [units, setUnits] = useState<Units>('metric');
+  // Hybrid: fuel type selection
+  const allFuelTypes = Array.from(new Set(fillUps.map(f => f.fuelType).filter(Boolean)));
+  const [selectedFuelType, setSelectedFuelType] = useState<string>('ALL');
+  const filteredByFuel = useMemo(() => {
+    if (selectedFuelType === 'ALL') return fillUps;
+    return fillUps.filter(f => f.fuelType === selectedFuelType);
+  }, [fillUps, selectedFuelType]);
   const now = useMemo(() => new Date(), []);
   const filtered = useMemo(() => {
-    if (!range) return fillUps;
-    return fillUps.filter(f => {
+    if (!range) return filteredByFuel;
+    return filteredByFuel.filter(f => {
       const d = typeof f.date === 'string' ? new Date(f.date) : f.date;
       return d >= new Date(now.getTime() - (range ?? 30) * 24 * 60 * 60 * 1000);
     });
-  }, [fillUps, range, now]);
+  }, [filteredByFuel, range, now]);
 
   if (error) {
     return (
@@ -174,7 +182,7 @@ export default function StatsPageClient({ fillUps, carId, error, loading = false
   ];
 
   // Get fuel type from first fill-up (all fill-ups for a car have the same type)
-  const fuelType = fillUps[0]?.car?.fuelType;
+  const fuelType = filtered[0]?.fuelType;
   const isElectric = fuelType === 'ELECTRIC';
   // If electric, always use metric units
   const displayUnits = isElectric ? 'metric' : units;
@@ -186,6 +194,18 @@ export default function StatsPageClient({ fillUps, carId, error, loading = false
           <span role="img" aria-label="stats">📊</span> Fuel Stats
         </h1>
         <div className="flex flex-col sm:flex-row sm:items-center gap-2 mb-2 w-full justify-center">
+          {allFuelTypes.length > 1 && (
+            <select
+              value={selectedFuelType}
+              onChange={e => setSelectedFuelType(e.target.value)}
+              className="border border-[var(--border)] px-2 py-1 rounded-lg bg-[var(--background)] text-[var(--foreground)] font-semibold"
+            >
+              <option value="ALL">All Fuels</option>
+              {allFuelTypes.map(ft => (
+                <option key={ft} value={ft}>{ft}</option>
+              ))}
+            </select>
+          )}
           {!isElectric && (
             <UnitsToggle units={units} setUnits={setUnits} disabled={isElectric} />
           )}
@@ -225,7 +245,8 @@ export default function StatsPageClient({ fillUps, carId, error, loading = false
               <StatCard label={`Total Fuel Used`} value={`${totalLiters.toFixed(2)} ${isElectric ? 'kWh' : (displayUnits === 'imperial' ? 'gal' : 'L')}`} icon="⛽" color="secondary" info={isElectric ? 'Total kilowatt-hours used in selected period.' : (displayUnits === 'imperial' ? 'Total gallons used in selected period.' : 'Total liters used in selected period.')} />
               <StatCard label="Total Fuel Cost" value={`${totalCost.toFixed(2)} ${filtered[0].currency}`} icon="💸" color="accent" info="Sum of all fill-up costs in selected period." />
               <StatCard label="Average Consumption" value={`${avgConsumption.toFixed(2)} ${isElectric ? 'kWh / 100km' : (displayUnits === 'imperial' ? 'MPG' : 'L / 100km')}`} icon="📏" color="primary" info={isElectric ? 'Kilowatt-hours per 100km (lower is better).' : (displayUnits === 'imperial' ? 'Miles per gallon (higher is better).' : 'Liters per 100km (lower is better).')} />
-              <StatCard label={`Average Cost / ${displayUnits === 'imperial' ? 'mi' : 'km'}`} value={`${costPerDist.toFixed(2)} ${filtered[0].currency}`} icon="💰" color="secondary" info={`Average fuel cost per ${displayUnits === 'imperial' ? 'mile' : 'kilometer'}.`} />
+              <StatCard label="Cost per Distance" value={`${costPerDist.toFixed(2)} ${filtered[0].currency} / ${displayUnits === 'imperial' ? 'mi' : 'km'}`} icon="💰" color="secondary" info="Fuel cost per unit of distance." />
+              <StatCard label="Fill-Up Count" value={`${filtered.length}`} icon="⛽️" color="accent" info="Total number of fill-ups in selected period." />
             </div>
           </div>
         </div>

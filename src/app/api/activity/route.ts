@@ -39,6 +39,7 @@ export async function GET(req: Request) {
       cost: f.cost,
       currency: f.currency,
       date: f.date,
+      fuelType: f.fuelType, // Fix: Prisma FillUp model includes fuelType
     })),
     ...mileageEntries.map(m => ({
       type: 'mileage',

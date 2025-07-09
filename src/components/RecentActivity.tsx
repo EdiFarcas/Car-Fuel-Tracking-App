@@ -10,6 +10,7 @@ interface ActivityItem {
   cost?: number;
   currency?: string;
   date: string;
+  fuelType?: string; // Add fuelType for fill-ups
 }
 
 export default function RecentActivity() {
@@ -46,7 +47,7 @@ export default function RecentActivity() {
             </div>
             <div className="text-sm text-[var(--foreground)]/60">
               {item.type === 'fillup'
-                ? `${item.liters} L, ${item.mileage} km${item.cost ? `, ${item.cost} ${item.currency}` : ''}`
+                ? `${item.liters} ${item.fuelType === 'ELECTRIC' ? 'kWh' : item.fuelType === 'LPG' ? 'L (LPG)' : item.fuelType === 'GASOLINE' ? 'L (Gasoline)' : item.fuelType === 'DIESEL' ? 'L (Diesel)' : 'L'}, ${item.mileage} km${item.cost ? `, ${item.cost} ${item.currency}` : ''}`
                 : `${item.mileage} km`}
               {' '}on {new Date(item.date).toLocaleDateString()}
             </div>

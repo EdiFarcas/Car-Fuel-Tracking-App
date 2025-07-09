@@ -3,6 +3,7 @@ import { prisma } from '@/lib/prisma';
 import { redirect } from 'next/navigation';
 import Link from 'next/link';
 import { FaCarSide, FaGasPump, FaCalendarAlt, FaIndustry, FaBolt } from 'react-icons/fa';
+import DeleteCarButton from '@/components/DeleteCarButton';
 
 interface CarDetailPageProps {
   params: {
@@ -15,13 +16,21 @@ export default async function CarDetailPage({ params }: CarDetailPageProps) {
   const session = await getSession();
   if (!session) redirect('/auth/login');
 
-  const userEmail = session.user?.email!;
+  const userEmail = session.user?.email || '';
   const car = await prisma.car.findFirst({
     where: {
       id: resolvedParams.carId,
       user: { email: userEmail },
     },
-  });
+    select: {
+      id: true,
+      name: true,
+      make: true,
+      model: true,
+      year: true,
+      fuelTypes: true,
+    },
+  }) as { id: string; name: string; make: string; model: string; year: number; fuelTypes?: string[] };
 
   if (!car) {
     return <div className="p-8 text-center text-red-500 text-lg font-semibold">Car not found or unauthorized access.</div>;
@@ -44,8 +53,15 @@ export default async function CarDetailPage({ params }: CarDetailPageProps) {
           <h1 className="text-4xl font-extrabold text-[var(--primary)] leading-tight tracking-tight flex items-center gap-3">
             {car.name}
             <span className="inline-block px-3 py-1 rounded-full text-base font-bold bg-gray-200 text-gray-700 ml-2">{car.year}</span>
+            {Array.isArray(car.fuelTypes) && car.fuelTypes.length > 1 ? (
+              <span className="ml-2 flex items-center">
+                <span className={`px-2 py-1 rounded-l-full text-xs font-bold ${fuelMeta[car.fuelTypes[0]]?.color || 'bg-gray-100 text-gray-700'}`} style={{ borderTopRightRadius: 0, borderBottomRightRadius: 0, borderRight: '1px solid #ccc' }}>{fuelMeta[car.fuelTypes[0]]?.icon}{car.fuelTypes[0]}</span>
+                <span className={`px-2 py-1 rounded-r-full text-xs font-bold ${fuelMeta[car.fuelTypes[1]]?.color || 'bg-gray-100 text-gray-700'}`} style={{ borderTopLeftRadius: 0, borderBottomLeftRadius: 0 }}>{fuelMeta[car.fuelTypes[1]]?.icon}{car.fuelTypes[1]}</span>
+              </span>
+            ) : Array.isArray(car.fuelTypes) && car.fuelTypes.length === 1 ? (
+              <span className={`ml-2 px-2 py-1 rounded-full text-xs font-bold ${fuelMeta[car.fuelTypes[0]]?.color || 'bg-gray-100 text-gray-700'}`}>{fuelMeta[car.fuelTypes[0]]?.icon}{car.fuelTypes[0]}</span>
+            ) : null}
           </h1>
-          <span className={`mt-2 px-4 py-1 rounded-full text-sm font-bold flex items-center gap-1 ${fuelMeta[car.fuelType]?.color || 'bg-gray-100 text-gray-700'}`}>{fuelMeta[car.fuelType]?.icon}{car.fuelType}</span>
         </div>
         {/* Car Details */}
         <div className="grid grid-cols-1 md:grid-cols-2 gap-8 px-8">
@@ -65,9 +81,12 @@ export default async function CarDetailPage({ params }: CarDetailPageProps) {
             <span className="ml-1 text-gray-400 font-mono text-lg">{car.year}</span>
           </div>
           <div className="flex items-center gap-3">
-            {fuelMeta[car.fuelType]?.icon}
-            <span className="font-semibold text-[var(--foreground)]">Fuel:</span>
-            <span className={`ml-1 px-2 py-1 rounded-full text-xs font-bold ${fuelMeta[car.fuelType]?.color || 'bg-gray-100 text-gray-700'}`}>{car.fuelType}</span>
+            {Array.isArray(car.fuelTypes) && car.fuelTypes.length > 0
+              ? car.fuelTypes.map((ft: string) => (
+                  <span key={ft} className={`ml-1 px-2 py-1 rounded-full text-xs font-bold flex items-center gap-1 ${fuelMeta[ft]?.color || 'bg-gray-100 text-gray-700'}`}>{fuelMeta[ft]?.icon}{ft}</span>
+                ))
+              : null
+            }
           </div>
         </div>
         {/* Actions */}
@@ -90,6 +109,7 @@ export default async function CarDetailPage({ params }: CarDetailPageProps) {
           >
             📊 View Stats
           </Link>
+          <DeleteCarButton carId={car.id} />
         </div>
       </div>
     </main>

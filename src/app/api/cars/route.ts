@@ -7,14 +7,14 @@ export async function POST(req: Request) {
   if (!session) return NextResponse.json({ message: 'Unauthorized' }, { status: 401 });
 
   const body = await req.json();
-  const { name, make, model, year, fuelType } = body;
+  const { name, make, model, year, fuelTypes } = body;
 
-  if (!name || !make || !model || !year || !fuelType) {
+  if (!name || !make || !model || !year || !fuelTypes || !Array.isArray(fuelTypes) || fuelTypes.length === 0) {
     return NextResponse.json({ message: 'Missing fields' }, { status: 400 });
   }
 
   const user = await prisma.user.findUnique({
-    where: { email: session.user?.email! },
+    where: { email: session.user?.email ?? undefined },
   });
 
   if (!user) {
@@ -27,7 +27,7 @@ export async function POST(req: Request) {
       make,
       model,
       year: parseInt(year),
-      fuelType,
+      fuelTypes: { set: fuelTypes },
       userId: user.id,
     },
   });

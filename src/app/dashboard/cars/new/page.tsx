@@ -12,16 +12,33 @@ export default function AddCarPage() {
     make: '',
     model: '',
     year: '',
-    fuelType: 'GASOLINE',
+    fuelTypes: ['GASOLINE'], // default to one selected
   });
   const [error, setError] = useState('');
 
   const handleChange = (e: React.ChangeEvent<HTMLInputElement | HTMLSelectElement>) => {
-    setForm({ ...form, [e.target.name]: e.target.value });
+    const { name, value, type, checked } = e.target;
+    if (name === 'fuelTypes') {
+      setForm((prev) => {
+        let updated = prev.fuelTypes;
+        if (checked) {
+          updated = [...prev.fuelTypes, value];
+        } else {
+          updated = prev.fuelTypes.filter((t: string) => t !== value);
+        }
+        return { ...prev, fuelTypes: updated };
+      });
+    } else {
+      setForm({ ...form, [name]: value });
+    }
   };
 
   const handleSubmit = async (e: React.FormEvent) => {
     e.preventDefault();
+    if (!form.fuelTypes.length) {
+      setError('Please select at least one fuel type.');
+      return;
+    }
     const res = await fetch('/api/cars', {
       method: 'POST',
       body: JSON.stringify(form),
@@ -97,18 +114,22 @@ export default function AddCarPage() {
           />
         </div>
         <div>
-          <label htmlFor="fuelType" className="block mb-1 font-semibold text-[var(--foreground)]">Fuel Type</label>
-          <select
-            id="fuelType"
-            name="fuelType"
-            value={form.fuelType}
-            onChange={handleChange}
-            className="w-full border border-[var(--border)] px-4 py-3 rounded-lg bg-[var(--background)] text-[var(--foreground)] focus:outline-none focus:ring-2 focus:ring-[var(--primary)] transition"
-          >
+          <label className="block mb-1 font-semibold text-[var(--foreground)]">Fuel Types</label>
+          <div className="flex flex-wrap gap-4">
             {fuelTypes.map((type) => (
-              <option key={type} value={type}>{type}</option>
+              <label key={type} className="flex items-center gap-2">
+                <input
+                  type="checkbox"
+                  name="fuelTypes"
+                  value={type}
+                  checked={form.fuelTypes.includes(type)}
+                  onChange={handleChange}
+                  className="accent-[var(--primary)]"
+                />
+                {type}
+              </label>
             ))}
-          </select>
+          </div>
         </div>
         <button
           type="submit"

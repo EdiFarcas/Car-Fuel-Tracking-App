@@ -26,15 +26,15 @@ export async function POST(req: Request) {
   const session = await getSession();
   if (!session) return NextResponse.json({ message: 'Unauthorized' }, { status: 401 });
 
-  const { carId, mileage, liters, cost, currency } = await req.json();
-  if (!carId || !mileage || !liters || !cost || !currency) {
+  const { carId, mileage, liters, cost, currency, fuelType } = await req.json();
+  if (!carId || !mileage || !liters || !cost || !currency || !fuelType) {
     return NextResponse.json({ message: 'Missing fields' }, { status: 400 });
   }
 
   const car = await prisma.car.findFirst({
     where: {
       id: carId,
-      user: { email: session.user?.email! },
+      user: { email: session.user?.email ?? undefined },
     },
   });
 
@@ -47,6 +47,7 @@ export async function POST(req: Request) {
       cost: parseFloat(cost),
       currency,
       carId,
+      fuelType,
     },
   });
 

@@ -19,12 +19,32 @@ export default function CarCard({ car }: { car: any }) {
     }
   }
 
+  // Show all fuel types as badges if car.fuelTypes is an array
+  let fuelBadges = null;
+  if (Array.isArray(car.fuelTypes) && car.fuelTypes.length > 0) {
+    if (car.fuelTypes.length === 1) {
+      fuelBadges = (
+        <span className={`ml-2 px-2 py-1 rounded-full text-xs font-bold ${getFuelBadgeColor(car.fuelTypes[0])}`}>{car.fuelTypes[0]}</span>
+      );
+    } else {
+      // Show both, but visually split: half badge for each
+      fuelBadges = (
+        <span className="ml-2 flex items-center">
+          <span className={`px-2 py-1 rounded-l-full text-xs font-bold ${getFuelBadgeColor(car.fuelTypes[0])}`} style={{ borderTopRightRadius: 0, borderBottomRightRadius: 0, borderRight: '1px solid #ccc' }}>{car.fuelTypes[0]}</span>
+          <span className={`px-2 py-1 rounded-r-full text-xs font-bold ${getFuelBadgeColor(car.fuelTypes[1])}`} style={{ borderTopLeftRadius: 0, borderBottomLeftRadius: 0 }}>{car.fuelTypes[1]}</span>
+        </span>
+      );
+    }
+  } else if (car.fuelType) {
+    fuelBadges = <span className={`ml-2 px-2 py-1 rounded-full text-xs font-bold ${getFuelBadgeColor(car.fuelType)}`}>{car.fuelType}</span>;
+  }
+
   return (
     <Link href={`/dashboard/cars/${car.id}`}>
       <div className="border border-[var(--border)] rounded-xl p-4 shadow-sm hover:shadow-md transition bg-[var(--muted)]">
         <div className="flex items-center justify-between">
           <h2 className="text-xl font-bold text-[var(--primary)]">{car.name}</h2>
-          <span className={`ml-2 px-2 py-1 rounded-full text-xs font-bold ${getFuelBadgeColor(car.fuelType)}`}>{car.fuelType}</span>
+          <span className="flex flex-wrap gap-1">{fuelBadges}</span>
         </div>
         <p className="text-[var(--foreground)]/80">{car.make} {car.model} ({car.year})</p>
         <div className="mt-3 text-sm text-[var(--foreground)]/80">
