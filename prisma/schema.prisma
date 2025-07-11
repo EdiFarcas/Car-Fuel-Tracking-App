@@ -49,6 +49,30 @@ model MileageEntry {
   date     DateTime @default(now())
 }
 
+model BugReport {
+  id      String   @id @default(cuid())
+  name    String?
+  email   String?
+  bug     String
+  date    DateTime @default(now())
+}
+
+model ImprovementIdea {
+  id      String   @id @default(cuid())
+  name    String?
+  email   String?
+  idea    String
+  date    DateTime @default(now())
+}
+
+model ContactMessage {
+  id      String   @id @default(cuid())
+  name    String?
+  email   String?
+  message String
+  date    DateTime @default(now())
+}
+
 enum FuelType {
   GASOLINE
   DIESEL
