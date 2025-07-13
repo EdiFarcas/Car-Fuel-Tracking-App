@@ -12,6 +12,12 @@ export default function RegisterPage() {
 
   const handleRegister = async (e: React.FormEvent) => {
     e.preventDefault();
+    // Email validation
+    const emailRegex = /^[^\s@]+@[^\s@]+\.[^\s@]+$/;
+    if (!emailRegex.test(email)) {
+      setError("Please include a valid email.");
+      return;
+    }
     const res = await fetch('/api/auth/register', {
       method: 'POST',
       body: JSON.stringify({ email, password }),
@@ -26,7 +32,7 @@ export default function RegisterPage() {
   };
 
   return (
-    <main className="w-full flex justify-center bg-[var(--background)] px-4 md:px-0 pt-10">
+    <main className="w-full flex justify-center px-4 md:px-0 pt-10">
       <div className="w-full max-w-2xl flex flex-col items-center p-8 bg-[var(--muted)] rounded-2xl shadow space-y-6">
         <h1 className="text-3xl font-bold text-[var(--secondary)]">Register</h1>
         <form onSubmit={handleRegister} className="w-full flex flex-col gap-6 items-center">
@@ -35,9 +41,17 @@ export default function RegisterPage() {
             placeholder="Email"
             value={email}
             required
-            onChange={(e) => setEmail(e.target.value)}
-            className="w-full max-w-2xl text-lg border border-[var(--border)] px-6 py-4 rounded-lg bg-[var(--background)] focus:outline-none focus:ring-2 focus:ring-[var(--secondary)] text-[var(--foreground)] placeholder:text-[var(--foreground)]/50"
+            onChange={(e) => {
+              setEmail(e.target.value);
+              if (error) setError("");
+            }}
+            className="w-full max-w-2xl text-lg border border-[var(--border)] px-6 py-4 rounded-lg bg-transparent focus:outline-none focus:ring-2 focus:ring-[var(--secondary)] text-[var(--foreground)] placeholder:text-[var(--foreground)]/50"
+            autoComplete="off"
+            pattern="[^\s@]+@[^\s@]+\.[^\s@]+"
           />
+          {error && (
+            <p className="text-red-500 text-center w-full -mt-4 mb-2">{error}</p>
+          )}
           <div className="relative w-full max-w-2xl">
             <input
               type={showPassword ? "text" : "password"}
@@ -45,7 +59,7 @@ export default function RegisterPage() {
               value={password}
               required
               onChange={(e) => setPassword(e.target.value)}
-              className="w-full text-lg border border-[var(--border)] px-6 py-4 rounded-lg bg-[var(--background)] focus:outline-none focus:ring-2 focus:ring-[var(--secondary)] text-[var(--foreground)] placeholder:text-[var(--foreground)]/50 pr-16"
+              className="w-full text-lg border border-[var(--border)] px-6 py-4 rounded-lg bg-transparent focus:outline-none focus:ring-2 focus:ring-[var(--secondary)] text-[var(--foreground)] placeholder:text-[var(--foreground)]/50 pr-16"
             />
             <button
               type="button"
@@ -60,7 +74,6 @@ export default function RegisterPage() {
           <button type="submit" className="w-full max-w-2xl bg-[var(--secondary)] text-white py-4 text-lg rounded-lg font-semibold shadow hover:bg-[var(--secondary)]/80 hover:scale-105 hover:shadow-lg transition-all duration-200">
             Register
           </button>
-          {error && <p className="text-red-500 text-center w-full">{error}</p>}
         </form>
       </div>
     </main>

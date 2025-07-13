@@ -28,7 +28,7 @@ export default function LoginPage() {
   };
 
   return (
-    <main className="w-full flex justify-center bg-[var(--background)] px-4 md:px-0 pt-10">
+    <main className="w-full flex justify-center px-4 md:px-0 pt-10">
       <div className="w-full max-w-2xl flex flex-col items-center p-8 bg-[var(--muted)] rounded-2xl shadow space-y-6">
         <h1 className="text-3xl font-bold text-[var(--primary)]">Login</h1>
         <form onSubmit={handleSubmit} className="w-full flex flex-col gap-6 items-center">
@@ -38,7 +38,7 @@ export default function LoginPage() {
             value={email}
             required
             onChange={(e) => setEmail(e.target.value)}
-            className="w-full max-w-2xl text-lg border border-[var(--border)] px-6 py-4 rounded-lg bg-[var(--background)] focus:outline-none focus:ring-2 focus:ring-[var(--primary)] text-[var(--foreground)] placeholder:text-[var(--foreground)]/50"
+            className="w-full max-w-2xl text-lg border border-[var(--border)] px-6 py-4 rounded-lg bg-transparent focus:outline-none focus:ring-2 focus:ring-[var(--primary)] text-[var(--foreground)] placeholder:text-[var(--foreground)]/50"
           />
           <div className="relative w-full max-w-2xl">
             <input
@@ -47,7 +47,7 @@ export default function LoginPage() {
               value={password}
               required
               onChange={(e) => setPassword(e.target.value)}
-              className="w-full text-lg border border-[var(--border)] px-6 py-4 rounded-lg bg-[var(--background)] focus:outline-none focus:ring-2 focus:ring-[var(--primary)] text-[var(--foreground)] placeholder:text-[var(--foreground)]/50 pr-16"
+              className="w-full text-lg border border-[var(--border)] px-6 py-4 rounded-lg bg-transparent focus:outline-none focus:ring-2 focus:ring-[var(--primary)] text-[var(--foreground)] placeholder:text-[var(--foreground)]/50 pr-16"
             />
             <button
               type="button"

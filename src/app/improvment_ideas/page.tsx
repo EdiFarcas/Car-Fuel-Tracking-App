@@ -34,7 +34,7 @@ export default function ImprovmentIdeasPage() {
   return (
     <main className="max-w-xl mx-auto p-8 space-y-8 bg-[var(--muted)] rounded-xl shadow">
       <h1 className="text-3xl font-bold text-[var(--primary)] mb-4">Improvement Ideas</h1>
-      <p className="text-lg text-[var(--foreground)]/80 mb-4">Have a suggestion or idea to make Car Fuel Tracker better? Share it with us!</p>
+      <p className="text-lg text-[var(--foreground)]/80 mb-4">Have a suggestion or idea to make FuelTrack better? Share it with us!</p>
       {submitted ? (
         <div className="bg-green-100 text-green-800 p-4 rounded-lg font-semibold text-center">Thank you for your suggestion! We value your feedback and ideas.</div>
       ) : (

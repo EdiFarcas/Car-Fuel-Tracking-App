@@ -15,7 +15,7 @@ const geistMono = Geist_Mono({
 });
 
 export const metadata: Metadata = {
-  title: "Car Fuel Tracker",
+  title: "FuelTrack",
   description: "Track your car's fuel and mileage easily.",
 };
 
@@ -43,7 +43,7 @@ export default async function RootLayout({
         <script dangerouslySetInnerHTML={{ __html: setThemeScript }} />
       </head>
       <body
-        className={`${geistSans.variable} ${geistMono.variable} antialiased bg-[var(--background)] text-[var(--foreground)]`}
+        className={`${geistSans.variable} ${geistMono.variable} antialiased`}
       >
         <Providers>
           <header className="w-full px-6 py-4 border-b border-[var(--border)] bg-[var(--muted)]/80 backdrop-blur-md shadow-lg rounded-b-xl z-30 sticky top-0">

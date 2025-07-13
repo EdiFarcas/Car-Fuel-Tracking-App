@@ -1,9 +1,10 @@
 "use client";
 import Link from "next/link";
 import { usePathname } from "next/navigation";
-import { useState } from "react";
+import { useEffect, useState } from "react";
 import { useSession } from "next-auth/react";
 import ThemeToggle from "./ThemeToggle";
+import Image from "./Image";
 
 export default function ClientNavbar() {
   const { data: session } = useSession();
@@ -11,6 +12,19 @@ export default function ClientNavbar() {
   const pathname = usePathname();
   const userInitial = session?.user?.name?.[0]?.toUpperCase() || session?.user?.email?.[0]?.toUpperCase() || "U";
   const [open, setOpen] = useState(false);
+  const [theme, setTheme] = useState<string | null>(null);
+
+  useEffect(() => {
+    // Listen for theme changes
+    const updateTheme = () => {
+      if (document.documentElement.classList.contains("dark")) setTheme("dark");
+      else setTheme("light");
+    };
+    updateTheme();
+    const observer = new MutationObserver(updateTheme);
+    observer.observe(document.documentElement, { attributes: true, attributeFilter: ["class"] });
+    return () => observer.disconnect();
+  }, []);
 
   function NavLink({ href, children }: { href: string; children: React.ReactNode }) {
     const isActive = pathname === href;
@@ -29,8 +43,28 @@ export default function ClientNavbar() {
   return (
     <nav className="flex w-full items-center justify-between">
       <Link href="/" className="flex items-center gap-2 text-2xl font-bold tracking-tight text-[var(--primary)] hover:scale-105 transition">
-        <span className="text-3xl">🚗</span>
-        <span>Car Fuel Tracker</span>
+        <span className="relative w-10 h-10 block">
+          {theme === "dark" ? (
+            <Image
+              src="/Light_Logo.png"
+              alt="FuelTrack logo light"
+              className="w-10 h-10 object-contain transition-colors"
+              width={40}
+              height={40}
+              priority
+            />
+          ) : (
+            <Image
+              src="/Dark_Logo.png"
+              alt="FuelTrack logo dark"
+              className="w-10 h-10 object-contain transition-colors"
+              width={40}
+              height={40}
+              priority
+            />
+          )}
+        </span>
+        <span>FuelTrack</span>
       </Link>
       {/* Desktop nav */}
       <div className="hidden md:flex gap-4 items-center">
