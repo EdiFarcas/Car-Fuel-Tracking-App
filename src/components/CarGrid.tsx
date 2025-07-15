@@ -23,19 +23,23 @@ export default function CarGrid({ cars }: { cars: any[] }) {
 
   return (
     <div>
-      <div className="flex flex-wrap gap-4 mb-4 items-center">
-        <label htmlFor="fuel-filter" className="font-medium text-sm">Fuel:</label>
-        <select id="fuel-filter" value={fuel} onChange={e => setFuel(e.target.value)} className="border rounded px-2 py-1 focus:outline-none focus:ring-2 focus:ring-[var(--primary)]">
-          {fuelTypes.map((type) => (
-            <option key={type} value={type}>{type.charAt(0) + type.slice(1).toLowerCase()}</option>
-          ))}
-        </select>
-        <label htmlFor="sort-cars" className="font-medium text-sm ml-4">Sort by:</label>
-        <select id="sort-cars" value={sort} onChange={e => setSort(e.target.value)} className="border rounded px-2 py-1 focus:outline-none focus:ring-2 focus:ring-[var(--primary)]">
-          {sortOptions.map((opt) => (
-            <option key={opt.value} value={opt.value}>{opt.label}</option>
-          ))}
-        </select>
+      <div className="flex flex-wrap gap-4 mb-4 items-center sm:flex-nowrap">
+        <div className="flex flex-col sm:flex-row gap-2 w-full sm:w-auto">
+          <label htmlFor="fuel-filter" className="font-medium text-sm">Fuel:</label>
+          <select id="fuel-filter" value={fuel} onChange={e => setFuel(e.target.value)} className="border rounded px-2 py-1 focus:outline-none focus:ring-2 focus:ring-[var(--primary)]">
+            {fuelTypes.map((type) => (
+              <option key={type} value={type}>{type.charAt(0) + type.slice(1).toLowerCase()}</option>
+            ))}
+          </select>
+        </div>
+        <div className="flex flex-col sm:flex-row gap-2 w-full sm:w-auto">
+          <label htmlFor="sort-cars" className="font-medium text-sm sm:ml-4">Sort by:</label>
+          <select id="sort-cars" value={sort} onChange={e => setSort(e.target.value)} className="border rounded px-2 py-1 focus:outline-none focus:ring-2 focus:ring-[var(--primary)]">
+            {sortOptions.map((opt) => (
+              <option key={opt.value} value={opt.value}>{opt.label}</option>
+            ))}
+          </select>
+        </div>
       </div>
       {filtered.length ? (
         <ul className="grid gap-4 sm:grid-cols-2 md:grid-cols-3" role="list" aria-label="Your cars">

@@ -1,4 +1,3 @@
-import { useState } from "react";
 import InfoTooltip from "./InfoTooltip";
 
 export default function StatCard({ label, value, icon, color, info }: { label: string; value: string; icon?: string; color?: 'primary' | 'secondary' | 'accent'; info?: string }) {
@@ -25,20 +24,18 @@ export default function StatCard({ label, value, icon, color, info }: { label: s
 
   return (
     <div
-      className="rounded-xl p-4 shadow-sm flex flex-col justify-center w-full"
+      className="rounded-xl p-3 shadow-sm flex flex-row items-center gap-4 w-full h-full min-w-0 min-h-0"
       style={{ background: cardBg, border: `1.5px solid ${cardBorder}` }}
     >
-      <div className="flex flex-row items-center justify-center w-full gap-4">
-        {icon && <span className={`text-2xl ${color ? `text-[var(--${color})]` : ''}`}>{icon}</span>}
-        <div className="flex flex-col items-center w-full">
-          <p className="text-sm text-[var(--foreground)]/60 flex items-center gap-1 text-center w-full justify-center">
-            {label}
-            {info && (
-              <InfoTooltip label={`Info: ${label}`} description={info} />
-            )}
-          </p>
-          <p className={`text-2xl font-semibold ${valueClass} text-center w-full`}>{value}</p>
-        </div>
+      {icon && <span className={`text-2xl ${color ? `text-[var(--${color})]` : ''}`}>{icon}</span>}
+      <div className="flex flex-row items-center w-full min-w-0 gap-2">
+        <span className="text-sm text-[var(--foreground)]/60 flex items-center gap-1 text-left overflow-hidden text-ellipsis whitespace-nowrap max-w-[40%]">
+          {label}
+          {info && (
+            <InfoTooltip label={`Info: ${label}`} description={info} />
+          )}
+        </span>
+        <span className={`text-2xl font-semibold ${valueClass} text-left break-words flex-1 min-w-0`}>{value}</span>
       </div>
     </div>
   );

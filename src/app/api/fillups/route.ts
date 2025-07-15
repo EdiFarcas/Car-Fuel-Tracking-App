@@ -26,7 +26,7 @@ export async function POST(req: Request) {
   const session = await getSession();
   if (!session) return NextResponse.json({ message: 'Unauthorized' }, { status: 401 });
 
-  const { carId, mileage, liters, cost, currency, fuelType } = await req.json();
+  const { carId, mileage, liters, cost, currency, fuelType, date } = await req.json();
   if (!carId || !mileage || !liters || !cost || !currency || !fuelType) {
     return NextResponse.json({ message: 'Missing fields' }, { status: 400 });
   }
@@ -48,6 +48,7 @@ export async function POST(req: Request) {
       currency,
       carId,
       fuelType,
+      date: date ? new Date(date) : undefined,
     },
   });
 

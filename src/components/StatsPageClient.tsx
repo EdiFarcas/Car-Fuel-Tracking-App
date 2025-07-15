@@ -26,9 +26,8 @@ export default function StatsPageClient({ fillUps, carId, error, loading = false
   const [units, setUnits] = useState<Units>('metric');
   // Hybrid: fuel type selection
   const allFuelTypes = Array.from(new Set(fillUps.map(f => f.fuelType).filter(Boolean)));
-  const [selectedFuelType, setSelectedFuelType] = useState<string>('ALL');
+  const [selectedFuelType, setSelectedFuelType] = useState<string>(allFuelTypes[0] || '');
   const filteredByFuel = useMemo(() => {
-    if (selectedFuelType === 'ALL') return fillUps;
     return fillUps.filter(f => f.fuelType === selectedFuelType);
   }, [fillUps, selectedFuelType]);
   const now = useMemo(() => new Date(), []);
@@ -69,6 +68,27 @@ export default function StatsPageClient({ fillUps, carId, error, loading = false
       </main>
     );
   }
+
+  // Comparative insights logic
+  // (removed duplicate block)
+
+  // Stats calculations
+  if (filtered.length < 2) {
+    return (
+      <main className="flex flex-col items-center justify-center py-16 px-2 min-h-[60vh]">
+        <div className="w-full max-w-md mx-auto bg-[var(--muted)] rounded-xl shadow p-8 flex flex-col items-center">
+          <span className="text-7xl mb-2 opacity-80" role="img" aria-label="No stats">📉</span>
+          <h1 className="text-2xl font-bold text-[var(--primary)] text-center">No Stats Yet</h1>
+          <p className="text-[var(--foreground)]/80 text-center max-w-xs mb-4">Add at least 2 fill-ups to unlock your personalized fuel stats, insights, and achievements. Start tracking your car’s journey today!</p>
+          <a href={`/dashboard/cars/${carId}/fillups`} className="mt-4 inline-block bg-[var(--primary)] text-white px-6 py-2 rounded-lg font-semibold shadow hover:bg-[var(--secondary)] transition focus:outline-none focus:ring-2 focus:ring-[var(--primary)]">➕ Add Your First Fill-Up</a>
+        </div>
+      </main>
+    );
+  }
+
+  // --- MAIN RETURN BLOCK ---
+
+  // MAIN RETURN BLOCK (only one return statement)
 
   // Comparative insights logic
   const last30 = filtered;
@@ -128,11 +148,11 @@ export default function StatsPageClient({ fillUps, carId, error, loading = false
   const first = filtered[0];
   const last = filtered[filtered.length - 1];
   const totalDistance = units === 'imperial' ? kmToMiles(last.mileage - first.mileage) : last.mileage - first.mileage;
-  const totalLiters = filtered.slice(1).reduce((sum, f) => sum + (units === 'imperial' ? litersToGallons(f.liters) : f.liters), 0);
-  const totalCost = filtered.slice(1).reduce((sum, f) => sum + f.cost, 0);
+  const totalLiters = filtered.slice(0, -1).reduce((sum, f) => sum + (units === 'imperial' ? litersToGallons(f.liters) : f.liters), 0);
+  const totalCost = filtered.slice(0).reduce((sum, f) => sum + f.cost, 0);
   const avgConsumption = (() => {
     const dist = last.mileage - first.mileage;
-    const lit = filtered.slice(1).reduce((sum, f) => sum + f.liters, 0);
+    const lit = filtered.slice(0, -1).reduce((sum, f) => sum + f.liters, 0);
     if (units === 'imperial') {
       return lPer100kmToMpg((lit / dist) * 100);
     } else {
@@ -186,61 +206,57 @@ export default function StatsPageClient({ fillUps, carId, error, loading = false
   const isElectric = fuelType === 'ELECTRIC';
   // If electric, always use metric units
   const displayUnits = isElectric ? 'metric' : units;
-
   return (
-    <main className="flex flex-col items-center justify-center py-8 px-2">
-      <div className="w-full max-w-2xl mx-auto p-4 sm:p-8 space-y-8 bg-[var(--muted)] rounded-xl shadow m-2 sm:m-4 mb-8 px-2 sm:px-8 lg:px-16">
+    <main className="flex flex-col items-center justify-center py-8 px-2 w-full">
+      {/* Centered header and controls */}
+      <div className="w-full max-w-2xl mx-auto p-4 sm:p-8 bg-[var(--muted)] rounded-xl shadow m-2 sm:m-4 mb-4 px-2 sm:px-8 lg:px-16 flex flex-col items-center">
         <h1 className="text-3xl sm:text-4xl font-extrabold text-[var(--primary)] flex items-center gap-3 m-2 sm:m-4 mt-0 justify-center">
           <span role="img" aria-label="stats">📊</span> Fuel Stats
         </h1>
         <div className="flex flex-col sm:flex-row sm:items-center gap-2 mb-2 w-full justify-center">
+                <span className="text-xs font-semibold text-[var(--foreground)]/70 mb-1 sm:mb-0 sm:mr-2">Fuel:</span>
           {allFuelTypes.length > 1 && (
-            <select
-              value={selectedFuelType}
-              onChange={e => setSelectedFuelType(e.target.value)}
-              className="border border-[var(--border)] px-2 py-1 rounded-lg bg-[var(--background)] text-[var(--foreground)] font-semibold"
-            >
-              <option value="ALL">All Fuels</option>
-              {allFuelTypes.map(ft => (
-                <option key={ft} value={ft}>{ft}</option>
-              ))}
-            </select>
+            <div className="flex flex-col sm:flex-row gap-2 w-full sm:w-auto">
+              <select
+                value={selectedFuelType}
+                onChange={e => setSelectedFuelType(e.target.value)}
+                className="border border-[var(--border)] px-2 py-1 rounded-lg bg-[var(--background)] text-[var(--foreground)] font-semibold"
+              >
+                {allFuelTypes.map(ft => (
+                  <option key={ft} value={ft}>{ft}</option>
+                ))}
+              </select>
+            </div>
           )}
           {!isElectric && (
-            <UnitsToggle units={units} setUnits={setUnits} disabled={isElectric} />
+            <div className="flex flex-col sm:flex-row gap-2 w-full sm:w-auto items-center justify-center">
+              <UnitsToggle units={units} setUnits={setUnits} disabled={isElectric} />
+            </div>
           )}
           {isElectric && (
             <span className="text-xs font-semibold text-[var(--foreground)]/70 mb-1 sm:mb-0 sm:mr-2">Units: kWh/100km</span>
           )}
         </div>
-        <div className="flex flex-wrap items-center gap-2 mb-2 w-full justify-center">
-          <div className="flex items-center gap-2 w-auto">
+        <div className="flex flex-col sm:flex-row flex-wrap items-center gap-2 mb-2 w-full justify-center">
+          <div className="flex flex-col sm:flex-row gap-2 w-full sm:w-auto items-center">
             <StatsTimeRangeFilter value={range} onChange={setRange} />
           </div>
-          <div className="flex items-end h-full">
+          <div className="flex flex-col sm:flex-row gap-2 w-full sm:w-auto items-center">
             <StatsExportButton fillUps={filtered} units={displayUnits} isElectric={isElectric} />
           </div>
         </div>
-        <div className="w-full overflow-x-auto flex justify-center">
-          <FuelStatsChart fillUps={chartFillUps} units={displayUnits} />
-        </div>
-        {comparison && (
-          <div className={`flex items-center gap-2 p-4 rounded-lg mb-2 font-medium ${comparison.improved ? 'bg-green-100 text-green-800' : 'bg-red-100 text-red-800'} w-full justify-center mx-auto`}> 
-            {comparison.improved ? '⬇️' : '⬆️'}
-            <span>
-              Avg. consumption: <b>{units === 'imperial' ? `${lPer100kmToMpg(avgLast30 ?? 0).toFixed(2)} MPG` : `${avgLast30?.toFixed(2)} L/100km`}</b> ({comparison.improved ? '-' : '+'}{comparison.percent}%)
-              <span className="ml-2 text-xs text-[var(--foreground)]/60">(Prev: {units === 'imperial' ? `${lPer100kmToMpg(avgPrev30 ?? 0).toFixed(2)} MPG` : `${avgPrev30?.toFixed(2)} L/100km`})</span>
-            </span>
-          </div>
-        )}
-        {insight && (
-          <div className="mb-4 text-[var(--foreground)]/80 text-sm flex items-center gap-2 w-full justify-center mx-auto">
-            <span role="img" aria-label="tip">💡</span> {insight}
-          </div>
-        )}
-        <div className="w-full flex justify-center">
-          <div className="bg-[var(--background)] border border-[var(--border)] rounded-3xl shadow-2xl p-4 sm:p-10 mb-6 w-full max-w-3xl m-0 sm:m-4 mb-8 animate-fadein flex justify-center items-center">
-            <div className="grid grid-cols-1 sm:grid-cols-2 gap-4 sm:gap-8 w-full">
+      </div>
+      {/* 2x2 Responsive CSS grid for stats, chart, achievements (achievements only under chart) */}
+      <div
+        className="w-full max-w-7xl mx-auto grid grid-cols-1 grid-rows-[auto_auto] gap-4 items-start mb-0
+        lg:grid-cols-2 lg:grid-rows-1 lg:gap-6"
+      >
+        {/* Stats Cards: top left (1x1) */}
+        <div
+          className="col-span-1 row-span-1 lg:col-start-1 lg:row-start-1 flex justify-center"
+        >
+          <div className="bg-[var(--background)] border border-[var(--border)] rounded-3xl shadow-2xl p-4 sm:p-6 w-full max-w-full animate-fadein flex justify-center items-start mb-0">
+            <div className="flex flex-row flex-wrap gap-4 sm:gap-6 w-full justify-center items-stretch">
               <StatCard label={`Total Distance`} value={`${totalDistance.toFixed(0)} ${displayUnits === 'imperial' ? 'mi' : 'km'}`} icon="🛣️" color="primary" info={displayUnits === 'imperial' ? 'Total miles driven in selected period.' : 'Total kilometers driven in selected period.'} />
               <StatCard label={`Total Fuel Used`} value={`${totalLiters.toFixed(2)} ${isElectric ? 'kWh' : (displayUnits === 'imperial' ? 'gal' : 'L')}`} icon="⛽" color="secondary" info={isElectric ? 'Total kilowatt-hours used in selected period.' : (displayUnits === 'imperial' ? 'Total gallons used in selected period.' : 'Total liters used in selected period.')} />
               <StatCard label="Total Fuel Cost" value={`${totalCost.toFixed(2)} ${filtered[0].currency}`} icon="💸" color="accent" info="Sum of all fill-up costs in selected period." />
@@ -250,8 +266,35 @@ export default function StatsPageClient({ fillUps, carId, error, loading = false
             </div>
           </div>
         </div>
-        <Achievements achievements={achievements} />
+
+        {/* Chart: top right (1x1) */}
+        <div
+          className="col-span-1 row-span-1 lg:col-start-2 lg:row-start-1 flex flex-col items-center"
+        >
+          <div className="w-full overflow-x-auto flex justify-center">
+            <FuelStatsChart fillUps={chartFillUps} units={displayUnits} />
+          </div>
+          {/* Achievements: only under chart on desktop */}
+          <div className="w-full mt-4 flex justify-center mb-0">
+            <Achievements achievements={achievements} />
+          </div>
+        </div>
       </div>
+      {/* Comparative insights and tips */}
+      {comparison && (
+        <div className={`flex items-center gap-2 p-4 rounded-lg mb-2 font-medium ${comparison.improved ? 'bg-green-100 text-green-800' : 'bg-red-100 text-red-800'} w-full justify-center mx-auto`}> 
+          {comparison.improved ? '⬇️' : '⬆️'}
+          <span>
+            Avg. consumption: <b>{units === 'imperial' ? `${lPer100kmToMpg(avgLast30 ?? 0).toFixed(2)} MPG` : `${avgLast30?.toFixed(2)} L/100km`}</b> ({comparison.improved ? '-' : '+'}{comparison.percent}%)
+            <span className="ml-2 text-xs text-[var(--foreground)]/60">(Prev: {units === 'imperial' ? `${lPer100kmToMpg(avgPrev30 ?? 0).toFixed(2)} MPG` : `${avgPrev30?.toFixed(2)} L/100km`})</span>
+          </span>
+        </div>
+      )}
+      {insight && (
+        <div className="mb-4 text-[var(--foreground)]/80 text-sm flex items-center gap-2 w-full justify-center mx-auto">
+          <span role="img" aria-label="tip">💡</span> {insight}
+        </div>
+      )}
     </main>
   );
 }

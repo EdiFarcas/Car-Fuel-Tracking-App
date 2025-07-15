@@ -17,14 +17,22 @@ export default function AddCarPage() {
   const [error, setError] = useState('');
 
   const handleChange = (e: React.ChangeEvent<HTMLInputElement | HTMLSelectElement>) => {
-    const { name, value, type, checked } = e.target;
+    const { name, value } = e.target;
     if (name === 'fuelTypes') {
+      // Only checkboxes will trigger this block
+      const checked = (e.target as HTMLInputElement).checked;
       setForm((prev) => {
         let updated = prev.fuelTypes;
         if (checked) {
-          updated = [...prev.fuelTypes, value];
+          // Only add if less than 2 selected
+          if (prev.fuelTypes.length < 2) {
+            updated = [...prev.fuelTypes, value];
+          }
         } else {
-          updated = prev.fuelTypes.filter((t: string) => t !== value);
+          // Only remove if more than 1 selected
+          if (prev.fuelTypes.length > 1) {
+            updated = prev.fuelTypes.filter((t: string) => t !== value);
+          }
         }
         return { ...prev, fuelTypes: updated };
       });
@@ -116,19 +124,26 @@ export default function AddCarPage() {
         <div>
           <label className="block mb-1 font-semibold text-[var(--foreground)]">Fuel Types</label>
           <div className="flex flex-wrap gap-4">
-            {fuelTypes.map((type) => (
-              <label key={type} className="flex items-center gap-2">
-                <input
-                  type="checkbox"
-                  name="fuelTypes"
-                  value={type}
-                  checked={form.fuelTypes.includes(type)}
-                  onChange={handleChange}
-                  className="accent-[var(--primary)]"
-                />
-                {type}
-              </label>
-            ))}
+            {fuelTypes.map((type) => {
+              const checked = form.fuelTypes.includes(type);
+              const disabled =
+                (!checked && form.fuelTypes.length >= 2) ||
+                (checked && form.fuelTypes.length === 1); // can't uncheck last
+              return (
+                <label key={type} className="flex items-center gap-2">
+                  <input
+                    type="checkbox"
+                    name="fuelTypes"
+                    value={type}
+                    checked={checked}
+                    onChange={handleChange}
+                    className="accent-[var(--primary)]"
+                    disabled={disabled}
+                  />
+                  {type}
+                </label>
+              );
+            })}
           </div>
         </div>
         <button

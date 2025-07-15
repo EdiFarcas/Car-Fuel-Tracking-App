@@ -5,7 +5,7 @@ export type Units = "metric" | "imperial";
 export default function UnitsToggle({ units, setUnits, disabled = false }: { units: Units; setUnits: (u: Units) => void; disabled?: boolean }) {
   return (
     <div className="flex flex-col sm:flex-row items-start sm:items-center gap-1 sm:gap-2 w-full max-w-xs">
-      <span className="text-xs font-semibold text-[var(--foreground)]/70 mb-1 sm:mb-0 sm:mr-2">Fuel:</span>
+      <span className="text-xs font-semibold text-[var(--foreground)]/70 mb-1 sm:mb-0 sm:mr-2">Metrics:</span>
       <div className="flex flex-col sm:flex-row gap-2 w-full items-center">
         <button
           type="button"

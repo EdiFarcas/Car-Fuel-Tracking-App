@@ -37,23 +37,30 @@ export default function RecentActivity() {
   );
 
   return (
-    <ul className="space-y-3" role="list" aria-label="Recent activity">
-      {activity.map((item) => (
-        <li key={item.type + item.id} className="flex items-center gap-3 bg-[var(--muted)] rounded-lg p-4 border border-[var(--border)] shadow-sm focus-within:ring-2 focus-within:ring-[var(--primary)]" tabIndex={0} aria-label={`${item.type === 'fillup' ? 'Fill-Up' : 'Mileage'} for ${item.car.name}`}> 
-          <span className={`text-2xl ${item.type === 'fillup' ? 'text-[var(--secondary)]' : 'text-[var(--primary)]'}`} aria-hidden="true">{item.type === 'fillup' ? '⛽' : '🛣️'}</span>
-          <div className="flex-1">
-            <div className="font-semibold text-[var(--foreground)]">
-              {item.type === 'fillup' ? 'Fill-Up' : 'Mileage'} for <span className="text-[var(--primary)]">{item.car.name}</span>
+    <div className="mb-8">
+      <ul
+        className="space-y-3 overflow-y-auto pr-2"
+        style={{ maxHeight: `${3 * 5.5}rem`, minHeight: activity.length > 0 ? '5.5rem' : undefined }}
+        role="list"
+        aria-label="Recent activity"
+      >
+        {activity.map((item) => (
+          <li key={item.type + item.id} className="flex items-center gap-3 bg-[var(--muted)] rounded-lg p-4 border border-[var(--border)] shadow-sm focus-within:ring-2 focus-within:ring-[var(--primary)]" tabIndex={0} aria-label={`${item.type === 'fillup' ? 'Fill-Up' : 'Mileage'} for ${item.car.name}`}> 
+            <span className={`text-2xl ${item.type === 'fillup' ? 'text-[var(--secondary)]' : 'text-[var(--primary)]'}`} aria-hidden="true">{item.type === 'fillup' ? '⛽' : '🛣️'}</span>
+            <div className="flex-1">
+              <div className="font-semibold text-[var(--foreground)]">
+                {item.type === 'fillup' ? 'Fill-Up' : 'Mileage'} for <span className="text-[var(--primary)]">{item.car.name}</span>
+              </div>
+              <div className="text-sm text-[var(--foreground)]/60">
+                {item.type === 'fillup'
+                  ? `${item.liters} ${item.fuelType === 'ELECTRIC' ? 'kWh' : item.fuelType === 'LPG' ? 'L (LPG)' : item.fuelType === 'GASOLINE' ? 'L (Gasoline)' : item.fuelType === 'DIESEL' ? 'L (Diesel)' : 'L'}, ${item.mileage} km${item.cost ? `, ${item.cost} ${item.currency}` : ''}`
+                  : `${item.mileage} km`}
+                {' '}on {new Date(item.date).toLocaleDateString()}
+              </div>
             </div>
-            <div className="text-sm text-[var(--foreground)]/60">
-              {item.type === 'fillup'
-                ? `${item.liters} ${item.fuelType === 'ELECTRIC' ? 'kWh' : item.fuelType === 'LPG' ? 'L (LPG)' : item.fuelType === 'GASOLINE' ? 'L (Gasoline)' : item.fuelType === 'DIESEL' ? 'L (Diesel)' : 'L'}, ${item.mileage} km${item.cost ? `, ${item.cost} ${item.currency}` : ''}`
-                : `${item.mileage} km`}
-              {' '}on {new Date(item.date).toLocaleDateString()}
-            </div>
-          </div>
-        </li>
-      ))}
-    </ul>
+          </li>
+        ))}
+      </ul>
+    </div>
   );
 }

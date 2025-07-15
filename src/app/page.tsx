@@ -28,9 +28,9 @@ function UseCaseBlocks() {
       <h2 className="text-3xl font-bold text-center text-[var(--primary)] mb-8">Who Is This For?</h2>
       <div className="grid grid-cols-1 sm:grid-cols-3 gap-8">
         {blocks.map((b) => (
-          <div key={b.title} className="group bg-white/40 dark:bg-[var(--muted)]/60 rounded-xl shadow p-6 flex flex-col items-center gap-3 border border-[var(--border)] transition-all hover:scale-105 hover:bg-white/60 dark:hover:bg-[var(--muted)]/80 animate-fade-in backdrop-blur">
+          <div key={b.title} className="group bg-[var(--muted)] rounded-xl shadow p-6 flex flex-col items-center gap-3 border border-[var(--border)] transition-all hover:scale-105 hover:bg-[var(--primary)]/10 animate-fade-in">
             <span className="text-4xl group-hover:scale-125 transition-transform">{b.icon}</span>
-            <h3 className="font-semibold text-lg text-[var(--primary)] group-hover:text-[var(--secondary)]">{b.title}</h3>
+            <h3 className="font-semibold text-lg text-[var(--primary)] group-hover:text-[var(--secondary)] text-center w-full">{b.title}</h3>
             <p className="text-center text-[var(--foreground)]/80 group-hover:text-[var(--foreground)]">{b.desc}</p>
           </div>
         ))}
@@ -66,7 +66,7 @@ function FeatureGrid() {
       {features.map((f, i) => (
         <div
           key={f.title}
-          className={`flex flex-col items-center text-center gap-2 bg-white/40 dark:bg-[var(--muted)]/60 rounded-xl shadow p-6 border border-[var(--border)] transition-all duration-300 cursor-pointer ${open === i ? "scale-105 bg-white/60 dark:bg-[var(--muted)]/80" : ""} backdrop-blur`}
+          className={`flex flex-col items-center text-center gap-2 bg-[var(--muted)] rounded-xl shadow p-6 border border-[var(--border)] transition-all duration-300 cursor-pointer ${open === i ? "scale-105 bg-[var(--primary)]/10" : ""}`}
           onClick={() => setOpen(open === i ? null : i)}
           onMouseEnter={() => setOpen(i)}
           onMouseLeave={() => setOpen(null)}
@@ -170,17 +170,6 @@ export default function Home() {
 
       {/* ...existing reviews, etc... */}
 
-      {/* Footer */}
-      <footer className="w-full py-6 flex flex-col items-center justify-center border-t border-[var(--border)] bg-[var(--muted)] text-sm text-gray-500 gap-2 mt-auto">
-        <nav className="flex gap-6 mb-1">
-          <Link href="/about" className="hover:text-[var(--primary)] transition">About</Link>
-          <Link href="/contact" className="hover:text-[var(--primary)] transition">Contact</Link>
-          <Link href="/bugs" className="hover:text-[var(--primary)] transition">Bug Report</Link>
-          <Link href="/improvment_ideas" className="hover:text-[var(--primary)] transition">Improvment Ideas</Link>
-          <Link href="/privacy" className="hover:text-[var(--primary)] transition">Privacy Policy</Link>
-        </nav>
-        <span>&copy; {new Date().getFullYear()} Car Fuel Tracker.</span>
-      </footer>
     </div>
   );
 }

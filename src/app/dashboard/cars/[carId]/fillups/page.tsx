@@ -19,6 +19,21 @@ const currencies = ['EUR', 'USD', 'RON', 'GBP'];
 export default function FillUpsPage() {
   const { carId } = useParams();
   const [fillups, setFillups] = useState<FillUp[]>([]);
+  // Toggle for showing/hiding fill-ups
+  const [showFillUps, setShowFillUps] = useState(false);
+  // Filter and sort state
+  const [filterFuelType, setFilterFuelType] = useState('');
+  const [sortOrder, setSortOrder] = useState('date-desc');
+  // Filter and sort logic for fill-ups
+  const filteredFillUps = fillups
+    .filter(f => !filterFuelType || f.fuelType === filterFuelType)
+    .sort((a, b) => {
+      if (sortOrder === 'date-desc') return new Date(b.date).getTime() - new Date(a.date).getTime();
+      if (sortOrder === 'date-asc') return new Date(a.date).getTime() - new Date(b.date).getTime();
+      if (sortOrder === 'mileage-desc') return b.mileage - a.mileage;
+      if (sortOrder === 'mileage-asc') return a.mileage - b.mileage;
+      return 0;
+    });
   const [carFuelTypes, setCarFuelTypes] = useState<string[]>([]);
   const [form, setForm] = useState({
     mileage: '',
@@ -26,6 +41,7 @@ export default function FillUpsPage() {
     cost: '',
     currency: 'EUR',
     fuelType: '',
+    date: '',
   });
   const [error, setError] = useState('');
 
@@ -58,7 +74,7 @@ export default function FillUpsPage() {
     if (res.ok) {
       const newFill = await res.json();
       setFillups((prev) => [newFill, ...prev]);
-      setForm({ mileage: '', liters: '', cost: '', currency: 'EUR', fuelType: carFuelTypes[0] || '' });
+      setForm({ mileage: '', liters: '', cost: '', currency: 'EUR', fuelType: carFuelTypes[0] || '', date: '' });
       setError('');
     } else {
       const data = await res.json();
@@ -77,10 +93,23 @@ export default function FillUpsPage() {
   }
 
   return (
-    <main className="max-w-2xl mx-auto p-8 space-y-8 bg-[var(--muted)] rounded-xl shadow">
-      <h1 className="text-2xl font-bold text-[var(--primary)]">Fuel Fill-Ups</h1>
+    <main className="max-w-2xl mx-auto p-8 space-y-8 bg-[var(--muted)] rounded-xl shadow mb-8">
+      <h1 className="text-2xl font-bold text-[var(--primary)] text-center">Fuel Fill-Ups</h1>
 
       <form onSubmit={handleSubmit} className="grid grid-cols-1 sm:grid-cols-2 gap-4 bg-white p-6 rounded-lg border border-[var(--border)]">
+        <div className="flex flex-col gap-1">
+          <label htmlFor="date" className="font-medium text-[var(--primary)]">Date & Time</label>
+          <input
+            id="date"
+            name="date"
+            type="datetime-local"
+            value={form.date}
+            onChange={handleChange}
+            required
+            className="border border-[var(--border)] px-4 py-2 rounded-lg focus:outline-none focus:ring-2 focus:ring-[var(--primary)] bg-[var(--muted)] text-[var(--foreground)]"
+          />
+          <span className="text-xs text-gray-500">Select the date and hour of the fill-up</span>
+        </div>
         <div className="flex flex-col gap-1">
           <label htmlFor="mileage" className="font-medium text-[var(--primary)]">Odometer</label>
           <input
@@ -186,11 +215,69 @@ export default function FillUpsPage() {
         {error && <p className="col-span-full text-red-500 text-center mt-2">{error}</p>}
       </form>
 
-      <ul className="space-y-3">
-        {fillups.map((fill) => (
-          <FillUpCard key={fill.id} fill={{ ...fill, car: { fuelType: fill.fuelType } }} />
-        ))}
-      </ul>
+      {/* Toggle and Filters for Fill-Ups */}
+      {!showFillUps && (
+        <div className="flex justify-center mb-4">
+          <button
+            type="button"
+            className={`px-4 py-2 rounded-lg font-semibold shadow border border-[var(--border)] transition-all bg-[var(--muted)] text-[var(--primary)]`}
+            onClick={() => setShowFillUps(true)}
+          >
+            Show Fill-Ups
+          </button>
+        </div>
+      )}
+      {showFillUps && (
+        <div className="flex flex-col items-center gap-4 mb-4">
+          <button
+            type="button"
+            className="px-4 py-2 rounded-lg font-semibold shadow border border-[var(--border)] transition-all w-full max-w-xs bg-[var(--primary)] text-white mb-2"
+            onClick={() => setShowFillUps(false)}
+          >
+            Hide Fill-Ups
+          </button>
+          <div className="flex flex-wrap gap-2 items-center justify-center w-full sm:flex-nowrap">
+            <div className="flex flex-col sm:flex-row gap-2 w-full sm:w-auto">
+              <label className="text-sm font-medium text-[var(--primary)]">Filter by Fuel Type:</label>
+              <select
+                value={filterFuelType}
+                onChange={e => setFilterFuelType(e.target.value)}
+                className="border border-[var(--border)] px-2 py-1 rounded-lg bg-[var(--background)] text-[var(--foreground)] font-semibold"
+              >
+                <option value="">All</option>
+                {carFuelTypes.map((type) => (
+                  <option key={type} value={type}>{type}</option>
+                ))}
+              </select>
+            </div>
+            <div className="flex flex-col sm:flex-row gap-2 w-full sm:w-auto">
+              <label className="text-sm font-medium text-[var(--primary)] sm:ml-2">Sort by:</label>
+              <select
+                value={sortOrder}
+                onChange={e => setSortOrder(e.target.value)}
+                className="border border-[var(--border)] px-2 py-1 rounded-lg bg-[var(--background)] text-[var(--foreground)] font-semibold"
+              >
+                <option value="date-desc">Newest</option>
+                <option value="date-asc">Oldest</option>
+                <option value="mileage-desc">Highest Mileage</option>
+                <option value="mileage-asc">Lowest Mileage</option>
+              </select>
+            </div>
+          </div>
+        </div>
+      )}
+      {showFillUps && (
+        <div className="mb-8">
+          <ul
+            className="space-y-3 overflow-y-auto pr-2"
+            style={{ maxHeight: `${3 * 6.5}rem`, minHeight: filteredFillUps.length > 0 ? '6.5rem' : undefined }}
+          >
+            {filteredFillUps.map((fill) => (
+              <FillUpCard key={fill.id} fill={{ ...fill, car: { fuelType: fill.fuelType } }} />
+            ))}
+          </ul>
+        </div>
+      )}
     </main>
   );
 }
